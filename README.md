@@ -253,7 +253,283 @@ openssl enc -aes-256-ecb -d -pbkdf2 -iter 356 -nosalt -pass pass:logankayla -in 
 curl -X POST 127.0.0.1:2009/submit-H "Content-Type: application/json"-d '{"session_id":"09ad03f7639eafe8","decrypted_word":"princesspooh"}'
 ```
 # Asymetryczne
+
+## Zadanie 3.1 - Generowanie kluczy RSA
+1) Generujemy parę kluczy RSA:
+```bash
+openssl genpkey -algorithm RSA -out private_key.pem -pkeyopt rsa_keygen_bits:2048
+openssl rsa -pubout -in private_key.pem -out public_key.pem
+```
+2) Wysłanie kluczy do serwera:
+```bash
+curl -X POST 127.0.0.1:3001/upload/public -H "Content-Type: multipart/form-data" -F "file=@public_key.pem"
+curl -X POST 127.0.0.1:3001/upload/private -H "Content-Type: multipart/form-data" -F "file=@private_key.pem"
+```
+
+## Zadanie 3.2 - Generowanie kluczy EC
+1) Generowanie pary kluczy EC:
+```bash
+openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:prime256v1 -out private_key.pem
+openssl ec -in private_key.pem -pubout -out public_key.pem
+```
+2) Wysłanie kluczy do serwera:
+```bash
+curl -X POST 127.0.0.1:3002/upload/ec/public -H "Content-Type: multipart/form-data" -F "file=@public_key.pem"
+curl -X POST 127.0.0.1:3002/upload/ec/private -H "Content-Type: multipart/form-data" -F "file=@private_key.pem"
+```
+
+## Zadanie 3.3 - Weryfikacja kluczy RSA
+1) Wysłanie kluczy RSA do serwera:
+```bash
+curl -X POST 127.0.0.1:3003/checkkeys -H "Content-Type: multipart/form-data" -F "private_key_pem=@private_key.pem" -F "public_key_pem=@public_key.pem"
+```
+
+## Zadanie 3.4 - Generowanie kluczy RSA i publicznego z klucza prywatnego
+1) Generowanie klucza publicznego z prywatnego:
+```bash
+openssl rsa -in private_key.pem -pubout -out public_key.pem
+```
+2) Wysłanie klucza publicznego:
+```bash
+curl -X POST 127.0.0.1:3004/submit -H "Content-Type: application/json" -d '{"session_id":"<session_id>", "public_key_pem":"@public_key.pem"}'
+```
 # Password cracking
+
+## Zadanie 4.1 - Łamanie MD5
+1) Wysłanie requestu do endpointa:
+```bash
+curl 127.0.0.1:4001/hash
+```
+2) Łamanie hash MD5:
+```bash
+hashcat -m 0 <hash_file> /path/to/rockyou.txt
+```
+
+## Zadanie 4.2 - Łamanie SHA-1
+1) Wysłanie requestu do endpointa:
+```bash
+curl 127.0.0.1:4002/hash
+```
+2) Łamanie hash SHA-1:
+```bash
+hashcat -m 100 <hash_file> /path/to/rockyou.txt
+```
+
+## Zadanie 4.3 - Łamanie SHA-256
+1) Wysłanie requestu do endpointa:
+```bash
+curl 127.0.0.1:4003/hash
+```
+2) Łamanie hash SHA-256:
+```bash
+hashcat -m 1400 <hash_file> /path/to/rockyou.txt
+```
+
+## Zadanie 4.4 - Łamanie SHA-512
+1) Wysłanie requestu do endpointa:
+```bash
+curl 127.0.0.1:4004/hash
+```
+2) Łamanie hash SHA-512:
+```bash
+hashcat -m 1800 <hash_file> /path/to/rockyou.txt
+```
+
+## Zadanie 4.5 - Łamanie bcrypt
+1) Wysłanie requestu do endpointa:
+```bash
+curl 127.0.0.1:4005/hash
+```
+2) Łamanie bcrypt:
+```bash
+hashcat -m 3200 <hash_file> /path/to/rockyou.txt
+```
+
+## Zadanie 4.6 - Łamanie SHA-1 z zastosowaniem słownika
+1) Wysłanie requestu do endpointa:
+```bash
+curl 127.0.0.1:4006/hash
+```
+2) Łamanie SHA-1:
+```bash
+hashcat -m 100 <hash_file> /path/to/wordlist.txt
+```
+
+## Zadanie 4.7 - Łamanie MD5
+1) Wysłanie requestu do endpointa:
+```bash
+curl 127.0.0.1:4007/hash
+```
+2) Łamanie MD5:
+```bash
+hashcat -m 0 <hash_file> /path/to/rockyou.txt
+```
+
+## Zadanie 4.8 - Łamanie SHA-1 z zastosowaniem słownika
+1) Wysłanie requestu do endpointa:
+```bash
+curl 127.0.0.1:4008/hash
+```
+2) Łamanie SHA-1:
+```bash
+hashcat -m 100 <hash_file> /path/to/wordlist.txt
+```
+
+## Zadanie 4.9 - Łamanie SHA-256
+1) Wysłanie requestu do endpointa:
+```bash
+curl 127.0.0.1:4009/hash
+```
+2) Łamanie SHA-256:
+```bash
+hashcat -m 1400 <hash_file> /path/to/rockyou.txt
+```
+
+## Zadanie 4.10 - Łamanie SHA-512
+1) Wysłanie requestu do endpointa:
+```bash
+curl 127.0.0.1:4010/hash
+```
+2) Łamanie SHA-512:
+```bash
+hashcat -m 1800 <hash_file> /path/to/rockyou.txt
+```
 # GPG
+
+## Zadanie 5.1 - RSA i eksport kluczy
+1) Generowanie klucza RSA:
+```bash
+gpg --gen-key
+```
+2) Eksport kluczy:
+```bash
+gpg --armor --export -o pub.key
+gpg --armor --export-secret-keys -o priv.key
+```
+3) Wysłanie kluczy na serwer:
+```bash
+curl -X POST 127.0.0.1:5001/submit/public -F "file=@pub.key"
+curl -X POST 127.0.0.1:5001/submit/private -F "file=@priv.key"
+```
+
+## Zadanie 5.2 - DSA i eksport kluczy
+1) Generowanie klucza DSA:
+```bash
+gpg --gen-key
+```
+2) Eksport kluczy:
+```bash
+gpg --armor --export -o pub.key
+gpg --armor --export-secret-keys -o priv.key
+```
+3) Wysłanie kluczy na serwer:
+```bash
+curl -X POST 127.0.0.1:5002/submit/public -F "file=@pub.key"
+curl -X POST 127.0.0.1:5002/submit/private -F "file=@priv.key"
+```
+
+## Zadanie 5.3 - RSA z określoną długością i datą ważności
+1) Generowanie klucza RSA:
+```bash
+gpg --gen-key
+```
+2) Eksport kluczy:
+```bash
+gpg --armor --export -o pub.key
+gpg --armor --export-secret-keys -o priv.key
+```
+3) Wysłanie kluczy na serwer:
+```bash
+curl -X POST 127.0.0.1:5003/submit/public -F "file=@pub.key"
+curl -X POST 127.0.0.1:5003/submit/private -F "file=@priv.key"
+```
+
+## Zadanie 5.4 - Deszyfrowanie pliku (CAMELLIA128)
+1) Pobranie pliku:
+```bash
+curl -X GET 127.0.0.1:5004/decrypt -o encrypted.zip
+```
+2) Rozpakowanie pliku:
+```bash
+unzip encrypted.zip
+```
+3) Deszyfrowanie:
+```bash
+gpg --batch --yes --cipher-algo CAMELLIA128 --passphrase $(cat passphrase.txt) --decrypt encrypted.txt
+```
+
+## Zadanie 5.5 - AES128 i szyfrowanie
+1) Pobranie pliku:
+```bash
+curl -X GET 127.0.0.1:5005/encrypt -o encrypted_word.zip
+```
+2) Szyfrowanie:
+```bash
+gpg --batch --yes --armor --cipher-algo AES128 --passphrase $(cat passphrase) --encrypt encrypted_word
+```
+
+## Zadanie 5.6 - Importowanie klucza i szyfrowanie
+1) Zaimportowanie klucza:
+```bash
+gpg --import public_key.asc
+```
+2) Szyfrowanie:
+```bash
+gpg --armor --encrypt --recipient <recipient_email> encrypted_word.txt
+```
+
+## Zadanie 5.7 - Deszyfrowanie i weryfikacja
+1) Pobranie pliku:
+```bash
+curl -X GET 127.0.0.1:5007/decrypt -o encrypted.zip
+```
+2) Rozpakowanie:
+```bash
+unzip encrypted.zip
+```
+3) Deszyfrowanie:
+```bash
+gpg --decrypt encrypted_word.asc
+```
+
+## Zadanie 5.8 - Podpisywanie i weryfikacja podpisu
+1) Pobranie pliku:
+```bash
+curl -X GET 127.0.0.1:5008/sign -o sign.zip
+```
+2) Podpisanie:
+```bash
+gpg --sign word.txt
+```
+
+## Zadanie 5.9 - Podpisanie i weryfikacja podpisu z oddzielnym podpisem
+1) Pobranie pliku:
+```bash
+curl -X GET 127.0.0.1:5009/detach-sign -o sign.zip
+```
+2) Podpisanie:
+```bash
+gpg --detach-sign word.txt
+```
+
+## Zadanie 5.10 - Weryfikacja podpisu
+1) Pobranie pliku:
+```bash
+curl -X GET 127.0.0.1:5010/clearsign -o clearsign.zip
+```
+2) Podpisanie:
+```bash
+gpg --clearsign word.txt
+```
+
+## Zadanie 5.11 - Weryfikacja podpisu
+1) Pobranie pliku:
+```bash
+curl -X GET 127.0.0.1:5011/sign -o sign.zip
+```
+2) Zweryfikowanie podpisu:
+```bash
+gpg --verify word.txt.gpg
+```
 # Powtórzenie
 # Kolokwium
