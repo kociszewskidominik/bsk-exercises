@@ -1,4 +1,10 @@
-[huj](#sekcja-1)
+[Hashowanie](#hashowanie)
+[Symetryczne](#symetryczne)
+[Asymetryczny](#asymetryczne)
+[Password cracking](#password-cracking)
+[GPG](#gpg)
+[Powtórzenie](#powtórzenie)
+[Kolokwium](#kolokwium)
 
 
 
@@ -8,9 +14,10 @@
 
 
 
-
-
-
-
-
-# Sekcja1
+# Hashowanie
+# Symetryczne
+# Asymetryczne
+# Password cracking
+# GPG
+# Powtórzenie
+# Kolokwium
