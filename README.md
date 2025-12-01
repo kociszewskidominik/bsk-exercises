@@ -1,9 +1,21 @@
 [Hashowanie](#hashowanie)
+
+
 [Symetryczne](#symetryczne)
+
+
 [Asymetryczny](#asymetryczne)
+
+
 [Password cracking](#password-cracking)
+
+
 [GPG](#gpg)
+
+
 [Powtórzenie](#powtórzenie)
+
+
 [Kolokwium](#kolokwium)
 
 
